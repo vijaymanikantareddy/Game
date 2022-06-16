@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject bubble1, bubble2, bubble3, bubble4;
 
-    void Start()
+    void Start()    //start function executes only one time.
     {
         level = 1;
         levelText.text = "Level " + level;
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void Update()   //update function executes for every frame.
     {
         levelTime -= Time.deltaTime;
         if (levelTime <= 0)
