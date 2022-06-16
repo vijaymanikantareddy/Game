@@ -9,20 +9,24 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     float score, timee;
     float levelTime;
+
     int level;
-    string targetNum;
+    public string targetNum;
     public List<string> targets = new List<string>();
     public List<string> tempTargets = new List<string>();
     public Image targetImg;
     public Text levelText;
+    public Text scoreText;
+    public Text gameoverText;
 
-    public GameObject bubbles;
+    public GameObject bubble1, bubble2, bubble3, bubble4;
 
     void Start()
     {
         level = 1;
         levelText.text = "Level " + level;
-        score = 0;          //
+        score = 0;
+        scoreText.text = score.ToString();
         timee = 0;
         levelTime = 20;
         foreach (var item in targets)
@@ -31,7 +35,7 @@ public class GameManager : MonoBehaviour
         }
 
         TargetGeneration();
-       
+
     }
 
     // Update is called once per frame
@@ -40,6 +44,7 @@ public class GameManager : MonoBehaviour
         levelTime -= Time.deltaTime;
         if (levelTime <= 0)
         {
+            tempTargets.RemoveAt(System.Convert.ToInt32(targetNum));
             if (tempTargets.Count > 0)
             {
                 TargetGeneration();
@@ -47,7 +52,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("GameCompleted");
+                gameoverText.text = "Score " + score  + "\n" + "Game Over...!!!" ;
             }
             level++;
             levelText.text = "Level " + level;
@@ -61,22 +66,32 @@ public class GameManager : MonoBehaviour
         targetImg.transform.GetChild(0).GetComponent<Text>().text = tempTargets[System.Convert.ToInt32(targetNum)];
         GameObject tempBubble = GameObject.Find(tempTargets[System.Convert.ToInt32(targetNum)]);
         List<string> tempEl = tempBubble.GetComponent<Targets>().targetEl;
-        bubbles.transform.GetChild(0).GetComponent<Text>().text = tempEl[Random.Range(0,tempEl.Count)];
-        tempTargets.RemoveAt(System.Convert.ToInt32(targetNum));
+        bubble1.transform.GetChild(0).GetComponent<Text>().text = tempEl[Random.Range(0, tempEl.Count)];
+        bubble2.transform.GetChild(0).GetComponent<Text>().text = tempEl[Random.Range(0, tempEl.Count)];
+        bubble3.transform.GetChild(0).GetComponent<Text>().text = tempEl[Random.Range(0, tempEl.Count)];
+        bubble4.transform.GetChild(0).GetComponent<Text>().text = tempEl[Random.Range(0, tempEl.Count)];
 
     }
 
     public void CheckAns(GameObject curBubble)
     {
+        
         string expsn = curBubble.transform.GetChild(0).GetComponent<Text>().text;
         ExpressionEvaluator.Evaluate(expsn, out float result);
-        if(result== System.Convert.ToInt32(tempTargets[System.Convert.ToInt32(targetNum)]))
+        if (result == System.Convert.ToInt32(tempTargets[System.Convert.ToInt32(targetNum)]))
         {
-            Debug.Log("correct");
+            score += 3;
+            scoreText.text = score.ToString();
+
         }
         else
         {
-            Debug.Log("wrong");
+            score -= 2;
+            scoreText.text = score.ToString();
         }
+        curBubble.GetComponent<Image>().enabled = false;
+        curBubble.transform.GetChild(0).GetComponent<Text>().text = "";
+        timee = 2;
+        curBubble.GetComponent<BubbleManager>().hiddenStatus = true;
     }
 }
